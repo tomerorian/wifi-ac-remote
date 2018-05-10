@@ -27,7 +27,7 @@ private:
   String code = BASE_CODE;
   uint16_t pulse[PULSES];
   unsigned int nibbles[NIBBLES];
-  boolean has_changed = true;
+  boolean has_changed = false;
   IRsend* irsend;
 
   unsigned int* update_pulse()
@@ -123,7 +123,7 @@ public:
   {
     if (this->has_changed) {
       send_code();
-      this->has_changed = true;
+      this->has_changed = false;
     }
   }
 

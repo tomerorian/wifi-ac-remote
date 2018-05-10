@@ -29,6 +29,13 @@ int set_temp(String temp);
 int set_on(String onOff);
 int set_fan_power(String power);
 int set_mode(String ac_mode);
+String get_state(String ignore); 
+
+// Rest exposed variables
+int v_temp = ac_remote.get_temp();
+boolean v_on = ac_remote.get_on();
+int v_fan_power = ac_remote.get_fan_power();
+int v_mode = ac_remote.get_mode();
 
 void wifi_connect() 
 {
@@ -59,6 +66,11 @@ void setup_rest()
   rest.function("set-on", set_on);
   rest.function("set-fan-power", set_fan_power);
   rest.function("set-mode", set_mode);
+
+  rest.variable("Temperature", &v_temp);
+  rest.variable("On", &v_on);
+  rest.variable("Fan Power", &v_fan_power);
+  rest.variable("Mode", &v_mode);
 }
 
 void load_ir_code()
@@ -116,6 +128,7 @@ void loop()
 int set_temp(String temp)
 {
   ac_remote.update_temp(temp.toInt());
+  v_temp = temp.toInt();
   
   return 0;
 }
@@ -125,6 +138,7 @@ int set_on(String str_on)
   boolean is_on = str_on == "1";
 
   ac_remote.update_on(is_on);
+  v_on = is_on;
 
   return 0;
 }
@@ -132,6 +146,7 @@ int set_on(String str_on)
 int set_fan_power(String power)
 {
   ac_remote.update_fan_power(power.toInt());
+  v_fan_power = power.toInt();
 
   return 0;
 }
@@ -139,6 +154,7 @@ int set_fan_power(String power)
 int set_mode(String ac_mode)
 {
   ac_remote.update_mode(ac_mode.toInt());
+  v_mode = ac_mode.toInt();
 
   return 0;
 }

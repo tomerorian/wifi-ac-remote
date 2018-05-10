@@ -80,6 +80,17 @@ private:
     this->has_changed = true;
   }
 
+  unsigned int read_code(int start, int bits)
+  {
+    unsigned int value = 0x0;
+    
+    for (int i = 0; i < bits; i++) {
+      value += (this->code[start + i] == '0' ? 0 : 1) << i;
+    }
+
+    return value;
+  }
+
   unsigned int calc_crc()
   {
     unsigned int crc = 0;
@@ -132,6 +143,11 @@ public:
     this->update_code(temp, TEMP_START, TEMP_BITS);
   }
 
+  int get_temp()
+  {
+    return read_code(TEMP_START, TEMP_BITS);
+  }
+
   void update_on(boolean isOn) 
   {
     unsigned int onOff = isOn ? 0x3 : 0xC;
@@ -139,13 +155,28 @@ public:
     this->update_code(onOff, ON_OFF_START, ON_OFF_BITS);
   }
 
+  boolean get_on()
+  {
+    return read_code(ON_OFF_START, ON_OFF_BITS) == 0x3;
+  }
+
   void update_fan_power(unsigned int fan_power)
   {
     this->update_code(fan_power, FAN_POWER_START, FAN_POWER_BITS);
   }
 
+  int get_fan_power()
+  {
+    return read_code(FAN_POWER_START, FAN_POWER_BITS);
+  }
+
   void update_mode(unsigned int ac_mode)
   {
     this->update_code(ac_mode, MODE_START, MODE_BITS);
+  }
+
+  int get_mode()
+  {
+    return read_code(MODE_START, MODE_BITS);
   }
 };

@@ -27,6 +27,8 @@ WiFiServer server(LISTEN_PORT);
 // Declare functions to be exposed to the API
 int set_temp(String temp);
 int set_on(String onOff);
+int set_fan_power(String power);
+int set_mode(String ac_mode);
 
 void wifi_connect() 
 {
@@ -55,6 +57,8 @@ void setup_rest()
   // Function to be exposed
   rest.function("set-temp", set_temp);
   rest.function("set-on", set_on);
+  rest.function("set-fan-power", set_fan_power);
+  rest.function("set-mode", set_mode);
 }
 
 void load_ir_code()
@@ -113,13 +117,28 @@ int set_temp(String temp)
 {
   ac_remote.update_temp(temp.toInt());
   
-  return 1;
+  return 0;
 }
 
-int set_on(String strOn)
+int set_on(String str_on)
 {
-  boolean isOn = strOn == "1";
+  boolean is_on = str_on == "1";
 
-  ac_remote.update_on(isOn);
+  ac_remote.update_on(is_on);
+
+  return 0;
 }
 
+int set_fan_power(String power)
+{
+  ac_remote.update_fan_power(power.toInt());
+
+  return 0;
+}
+
+int set_mode(String ac_mode)
+{
+  ac_remote.update_mode(ac_mode.toInt());
+
+  return 0;
+}

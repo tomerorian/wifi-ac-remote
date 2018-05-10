@@ -127,6 +127,11 @@ public:
     }
   }
 
+  void update_temp(unsigned int temp) 
+  {
+    this->update_code(temp, TEMP_START, TEMP_BITS);
+  }
+
   void update_on(boolean isOn) 
   {
     unsigned int onOff = isOn ? 0x3 : 0xC;
@@ -134,10 +139,13 @@ public:
     this->update_code(onOff, ON_OFF_START, ON_OFF_BITS);
   }
 
-  void update_temp(unsigned int temp) 
+  void update_fan_power(unsigned int fan_power)
   {
-    temp = temp & 0x3F;
-  
-    this->update_code(temp, TEMP_START, TEMP_BITS);
+    this->update_code(fan_power, FAN_POWER_START, FAN_POWER_BITS);
+  }
+
+  void update_mode(unsigned int ac_mode)
+  {
+    this->update_code(ac_mode, MODE_START, MODE_BITS);
   }
 };

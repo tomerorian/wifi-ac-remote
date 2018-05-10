@@ -27,10 +27,10 @@ private:
   String code = BASE_CODE;
   uint16_t pulse[PULSES];
   unsigned int nibbles[NIBBLES];
-  boolean hasChanged = false;
+  boolean has_changed = true;
   IRsend* irsend;
 
-  unsigned int* updatePulse()
+  unsigned int* update_pulse()
   {
     int pulseI = 0;
     for (int i = 0; i < this->code.length(); i++) {
@@ -58,7 +58,7 @@ private:
     }
   }
 
-  void updateNibbles()
+  void update_nibbles()
   {
     for (int nibbleI = 0; nibbleI < NIBBLES; nibbleI++) {
       this->nibbles[nibbleI] = 0;
@@ -70,17 +70,17 @@ private:
     }
   }
 
-  void updateCode(unsigned int value, int start, int bits) 
+  void update_code(unsigned int value, int start, int bits) 
   {
     for (int i = 0; i < bits; i++) {
       this->code[start + i] = (value & 0x1) == 0 ? '0' : '1';
       value = value >> 1;
     }
 
-    this->hasChanged = true;
+    this->has_changed = true;
   }
 
-  unsigned int calcCrc()
+  unsigned int calc_crc()
   {
     unsigned int crc = 0;
     
@@ -93,19 +93,19 @@ private:
     return crc;
   }
 
-  void updateCrc() 
+  void update_crc() 
   {
-     unsigned int crc = this->calcCrc();
+     unsigned int crc = this->calc_crc();
      
-     this->updateCode(crc, CRC_START, CRC_BITS);
+     this->update_code(crc, CRC_START, CRC_BITS);
   }
 
-  void sendCode() 
+  void send_code() 
   {
     Serial.println("Sending code");
-    this->updateNibbles();
-    this->updateCrc();
-    this->updatePulse();
+    this->update_nibbles();
+    this->update_crc();
+    this->update_pulse();
   
     for (int i = 0; i < 4; i++) {
       irsend->sendRaw(this->pulse, sizeof(this->pulse) / sizeof(this->pulse[0]), 38);
@@ -119,25 +119,25 @@ public:
     irsend->begin();
   }
   
-  void sendCodeIfNeeded()
+  void send_code_if_needed()
   {
-    if (this->hasChanged) {
-      sendCode();
-      this->hasChanged = false;
+    if (this->has_changed) {
+      send_code();
+      this->has_changed = true;
     }
   }
 
-  void updateOnOff(boolean isOn) 
+  void update_on(boolean isOn) 
   {
     unsigned int onOff = isOn ? 0x3 : 0xC;
     
-    this->updateCode(onOff, ON_OFF_START, ON_OFF_BITS);
+    this->update_code(onOff, ON_OFF_START, ON_OFF_BITS);
   }
 
-  void updateTemp(unsigned int temp) 
+  void update_temp(unsigned int temp) 
   {
     temp = temp & 0x3F;
   
-    this->updateCode(temp, TEMP_START, TEMP_BITS);
+    this->update_code(temp, TEMP_START, TEMP_BITS);
   }
 };

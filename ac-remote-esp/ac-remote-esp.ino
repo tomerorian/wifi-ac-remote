@@ -26,7 +26,7 @@ WiFiServer server(LISTEN_PORT);
 
 // Declare functions to be exposed to the API
 int set_temp(String temp);
-int setOnOff(String onOff);
+int set_on(String onOff);
 
 void wifi_connect() 
 {
@@ -54,7 +54,7 @@ void setup_rest()
   
   // Function to be exposed
   rest.function("set-temp", set_temp);
-  rest.function("set-on", setOnOff);
+  rest.function("set-on", set_on);
 }
 
 void load_ir_code()
@@ -105,21 +105,21 @@ void loop()
 {
   handle_rest();
 
-  ac_remote.sendCodeIfNeeded();
+  ac_remote.send_code_if_needed();
 }
 
 // Custom function accessible by the API
 int set_temp(String temp)
 {
-  ac_remote.updateTemp(temp.toInt());
+  ac_remote.update_temp(temp.toInt());
   
   return 1;
 }
 
-int setOnOff(String onOff)
+int set_on(String strOn)
 {
-  boolean isOn = onOff == "1";
+  boolean isOn = strOn == "1";
 
-  ac_remote.updateOnOff(isOn);
+  ac_remote.update_on(isOn);
 }
 

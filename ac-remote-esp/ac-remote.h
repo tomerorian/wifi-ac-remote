@@ -1,6 +1,7 @@
 #undef HAS_AVR_INTERRUPT_H
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
+#include "storage.h"
 
 #define PULSES 131
 #define ENCASING_PULSES 3
@@ -22,6 +23,10 @@
 
 #define BASE_CODE "710000000100011000111110000000000000000000000110000000000100110006"
 
+#define STORAGE_CODE_ADDRESS 0
+
+String loaded = "LOL";
+
 class ACRemote {
 private:
   String code = BASE_CODE;
@@ -29,6 +34,27 @@ private:
   unsigned int nibbles[NIBBLES];
   boolean has_changed = false;
   IRsend* irsend;
+  Storage* storage;;
+
+  void load_code()
+  {
+    this->storage->begin();
+    String loadedCode = this->storage->load_string(STORAGE_CODE_ADDRESS);
+    this->storage->end();
+
+    if (loadedCode.length() == this->code.length()) {
+      this->code = loadedCode; 
+    }
+
+    loaded = loadedCode;
+  }
+
+  void save_code()
+  {
+    this->storage->begin();
+    this->storage->save_string(STORAGE_CODE_ADDRESS, this->code.length() + 3, this->code);
+    this->storage->end();
+  }
 
   unsigned int* update_pulse()
   {
@@ -78,6 +104,8 @@ private:
     }
 
     this->has_changed = true;
+
+    this->save_code();
   }
 
   unsigned int read_code(int start, int bits)
@@ -119,19 +147,26 @@ private:
     this->update_pulse();
   
     for (int i = 0; i < 4; i++) {
-      irsend->sendRaw(this->pulse, sizeof(this->pulse) / sizeof(this->pulse[0]), 38);
+      this->irsend->sendRaw(this->pulse, sizeof(this->pulse) / sizeof(this->pulse[0]), 38);
       delay(40);
     }  
   }
 
 public:
   ACRemote(int sendPin) {
-    irsend = new IRsend(sendPin);
-    irsend->begin();
+    this->irsend = new IRsend(sendPin);
+    this->irsend->begin();
+
+    this->storage = new Storage();
+    this->load_code();
   }
   
   void send_code_if_needed()
   {
+    if (loaded.length() > 0) {
+      Serial.println(loaded);
+      loaded = "";
+    }
     if (this->has_changed) {
       send_code();
       this->has_changed = false;

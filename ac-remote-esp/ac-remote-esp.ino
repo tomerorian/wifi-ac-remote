@@ -2,11 +2,8 @@
 #include <ESP8266WiFi.h>
 #include <aREST.h>
 #include "wifi.h"
-#include "storage.h"
 #include "ac-remote.h"
 #include <WiFiClientSecure.h>
-
-Storage storage = Storage();
 
 // Create aREST instance
 aREST rest = aREST();
@@ -73,24 +70,10 @@ void setup_rest()
   rest.variable("Mode", &v_mode);
 }
 
-void load_ir_code()
-{
-  storage.begin();
-  storage.end();
-//  EEPROM.begin(512);
-//  bbb_username = load_string(BBB_USERNAME_ADDRESS);
-//  bbb_password = load_string(BBB_PASSWORD_ADDRESS);
-//  bis_username = load_string(BIS_USERNAME_ADDRESS);
-//  bis_password = load_string(BIS_PASSWORD_ADDRESS);
-//  EEPROM.end();
-}
-
 void setup(void)
 {
   // Start Serial
   Serial.begin(115200);
-
-  load_ir_code();
 
   setup_rest();
 

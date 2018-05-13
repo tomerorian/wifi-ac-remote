@@ -25,8 +25,6 @@
 
 #define STORAGE_CODE_ADDRESS 0
 
-String loaded = "LOL";
-
 class ACRemote {
 private:
   String code = BASE_CODE;
@@ -45,8 +43,6 @@ private:
     if (loadedCode.length() == this->code.length()) {
       this->code = loadedCode; 
     }
-
-    loaded = loadedCode;
   }
 
   void save_code()
@@ -163,10 +159,6 @@ public:
   
   void send_code_if_needed()
   {
-    if (loaded.length() > 0) {
-      Serial.println(loaded);
-      loaded = "";
-    }
     if (this->has_changed) {
       send_code();
       this->has_changed = false;

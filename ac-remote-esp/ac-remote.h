@@ -142,9 +142,9 @@ private:
     this->update_crc();
     this->update_pulse();
   
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 1; i++) {
       this->irsend->sendRaw(this->pulse, sizeof(this->pulse) / sizeof(this->pulse[0]), 38);
-      delay(40);
+      delay(100);
     }  
   }
 

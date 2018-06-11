@@ -137,7 +137,6 @@ private:
 
   void send_code() 
   {
-    Serial.println("Sending code");
     this->update_nibbles();
     this->update_crc();
     this->update_pulse();
